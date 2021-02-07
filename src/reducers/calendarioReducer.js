@@ -1,68 +1,72 @@
 const estadoInicial = {
-    categorias: ["Vacaciones", "Planificacion", "Preparativos"],
-    categoriaSeleccionada: "Vacaciones",
-    dias: {
-        1: "Vacaciones",
-        2: "Vacaciones",
-        3: "Vacaciones",
-        4: "Vacaciones",
-        5: "Vacaciones",
-        6: "Vacaciones",
-        7: "Vacaciones",
-        8: "Planificacion",
-        9: "Planificacion",
-        10: "Planificacion",
-        11: "Planificacion",
-        12: "Planificacion",
-        13: "Planificacion",
-        14: "Planificacion",
-        15: "Planificacion",
-        16: "Planificacion",
-        17: "Planificacion",
-        18: "Planificacion",
-        19: "Planificacion",
-        20: "Planificacion",
-        52: "Preparativos",
-        53: "Preparativos",
-        54: "Preparativos",
-        57: "Preparativos",
-        58: "Preparativos"
-    }
+    categorias: [],
+    categoriaSeleccionada: "",
+    inputCatValue: "",
+    dias: {}
 };
 
 const calendarioReducer = (estadoPrevio = estadoInicial, action) => {
     switch(action.type) {
+
+        case 'CARGAR_FB':
+            return {
+                categorias: action.categorias,
+                categoriaSeleccionada: action.categorias[0],
+                inputCatValue: "",
+                dias: action.dias
+            }
+
         case 'ADD_CAT':
             return{
                 ...estadoPrevio,
-                categorias: [...estadoPrevio.categorias, action.categoria]
+                categorias: [...estadoPrevio.categorias, action.categoria],
+                categoriaSeleccionada: action.categoria,
+                inputCatValue: ""
             }
+
         case 'DEL_CAT':
+            let estadoNuevo = {...estadoPrevio}
+            let diasNuevo = {}
+            let categoriasNuevo = estadoPrevio.categorias.filter(cat => cat !== action.categoria)
+            
+            for (let dia in estadoNuevo.dias){
+                if ( estadoNuevo.dias[dia] !== action.categoria){
+                    diasNuevo = {...diasNuevo, [dia] : estadoPrevio.dias[dia]}
+                }
+            }
             return {
                 ...estadoPrevio,
-                categorias: estadoPrevio.categorias.filter(cat => cat !== action.categoria)
+                categorias: categoriasNuevo,
+                categoriaSeleccionada: categoriasNuevo[0] ,
+                dias: diasNuevo
             }
+
         case 'SEL_CAT':
             return {
                 ...estadoPrevio,
                 categoriaSeleccionada : action.categoria
             }
+
+        case 'INPUT_CAT':
+            return {
+                ...estadoPrevio,
+                inputCatValue: action.inputValue
+            }
+
         case 'ADD_DIA':        
         return {
             ...estadoPrevio,
             dias : {...estadoPrevio.dias, [action.dia] : action.categoria }
         }
+
         case 'DEL_DIA':
-            //console.dir("Del Dia :"+estadoPrevio.dias[action.dia])
-            //let diasNuevo = { delete estadoPrevio.dias[action.dia]}
-            delete estadoPrevio.dias[action.dia]
-            //let diasNuevo = estadoPrevio.dias.splice(action.dia, 1)
-            //console.log(diasNuevo)
-        return estadoPrevio
-            //{...estadoPrevio, dias: diasNuevo}            
-            //dias : estadoPrevio.dias.filter(dia => dia !== action.dia)
-            //dias :  {...estadoPrevio.dias, [action.dia] : undefined }
-            //dias :  {...estadoPrevio.dias, delete estadoPrevio.dias[] }
+            
+            let estadoNuevo1 = {};
+            const {"dias": parentValue, ...noChild} = estadoPrevio;
+            const {[action.dia]: removedValue, ...childWithout} = parentValue;
+            estadoNuevo1 = {...noChild, "dias": childWithout};
+            
+        return estadoNuevo1
             
         default:
             return estadoPrevio

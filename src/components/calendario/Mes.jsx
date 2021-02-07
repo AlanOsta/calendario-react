@@ -49,8 +49,7 @@ class Mes extends React.Component {
     }
 
     diaClickHandler = (numDia, categoriaSeleccionada) => {
-        console.log("diaClick :"+numDia, categoriaSeleccionada);
-        this.props.dias[numDia] ? this.props.delDia(numDia) : this.props.addDia(numDia, categoriaSeleccionada)
+        this.props.dias[numDia] === this.props.categoriaSeleccionada ? this.props.delDia(numDia, this.props.dias) : this.props.addDia(numDia, categoriaSeleccionada, this.props.dias)
     }
 
     render() {
@@ -76,7 +75,7 @@ class Mes extends React.Component {
             diasDelMes.push(
                 <div 
                 key={"dia"+i} 
-                className={this.props.dias[numDia] && this.props.dias[numDia] === this.props.categoriaSeleccionada ? 'day seleccionado' : 'day' } 
+                className={this.props.categoriaSeleccionada && this.props.dias[numDia] === this.props.categoriaSeleccionada ? 'day seleccionado' : this.props.dias[numDia] ? 'day conTarea' : 'day' } 
                 numdia={numDia} 
                 onClick={(e)=>{this.diaClickHandler(numDia, this.props.categoriaSeleccionada)}}
                 >{i}</div>
@@ -115,9 +114,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        // selCat: (cat) => dispatch(selCatAction(cat))
-        addDia: (dia, categoriaSeleccionada) => dispatch(addDiaAction(dia, categoriaSeleccionada)),
-        delDia: (dia, categoriaSeleccionada) => dispatch(delDiaAction(dia, categoriaSeleccionada))
+        
+        addDia: (dia, categoriaSeleccionada, diasPrevio) => dispatch(addDiaAction(dia, categoriaSeleccionada, diasPrevio)),
+        delDia: (dia, diasPrevio) => dispatch(delDiaAction(dia, diasPrevio))
         
     };
 }

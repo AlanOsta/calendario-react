@@ -1,51 +1,24 @@
 import React from 'react'
-//import { db } from "../../firebase";
 import { connect } from 'react-redux';
-import { selCatAction, delCatAction, addCatAction } from '../../actions/actions';
+import { selCatAction, delCatAction, addCatAction, inputCatAction, cargarFirebaseAction } from '../../actions/actions';
 
 class Categorias extends React.Component {
 
-    constructor () {
-        super()
-        this.state = {
-            inputCategoria: ""                             
-        };     
-    }
+    componentDidMount() {this.props.cargarFirebase()};
 
-    // cargaAnio = () => {
-    //     var docRef = db.collection("calendario").doc("anio");
-    //     docRef.get().then(function(doc) {               // Fetch del array completo 
-    //     let anioFB = doc.data().anioFB;						 
-    //     let categorias = [...new Set(anioFB)];			// Filtra solo valores unicos de categorias incluida " "
-    //     categorias.splice(categorias.indexOf(" "),1);	// Saco el " " del array    
-    //     console.log(categorias);
-    //     }).catch(function(error) {
-    //         console.log("Error al obtener el documento:", error);
-    //     });
-    // };
+    actualizaInputValue = e => {this.props.inputCat(e.target.value)};
 
-    actualizaInputValue = (e) => {
-        this.setState({inputCategoria: e.target.value});        
-    };
+    selCatClickHandler = cat => {this.props.selCat(cat)};
 
-    selCatClickHandler = (cat) => {
-      //  console.log(cat);
-        this.props.selCat(cat);
-    };
+    agregarCategoria = cat => {this.props.addCat(cat)};
 
-    agregarCategoria = (cat) => {
-        this.props.addCat(cat);
-    };
-
-    eliminarCategoria = (cat) => {
-       this.props.delCat(cat);
-    };
+    eliminarCategoria = cat => {this.props.delCat(cat, this.props.dias)};
     
     render() {
         // Creo los botones para las categorias
         let botonesCategorias = this.props.categorias.map((cat) => {
             return (
-                <div key={cat+"div"} className="botonCat">
+                <div key={cat+"div"} className="boton-cat-container">
                     <button 
                         key={cat} 
                         className={this.props.categoriaSeleccionada === cat ? 'botonCat seleccionado' : 'botonCat'} 
@@ -55,7 +28,7 @@ class Categorias extends React.Component {
                     <button 
                     key={cat+"x"} 
                     onClick={ () => this.eliminarCategoria(cat)}>
-                        X
+                        🗑️
                     </button>
                 </div>
             )
@@ -63,7 +36,7 @@ class Categorias extends React.Component {
 
         return (
             <div>
-                <div>
+                <div className= 'seleccion-categorias'>
                     <h4 className="titulo">Seleccione una categoria:</h4>
                     {botonesCategorias}                    
                 </div>
@@ -72,12 +45,10 @@ class Categorias extends React.Component {
                     <label htmlFor="addCatValue">
                         <input 
                         type="text" 
-                        name="addCat"
-                        value={this.state.inputCategoria}
-                        onChange={this.actualizaInputValue} 
+                        value={this.props.inputCatValue}
+                        onChange={(e) => this.actualizaInputValue(e)} 
                         placeholder="Ingrese una categoria"/>
-                        <button className="botonCat" onClick={() => this.agregarCategoria(this.state.inputCategoria)}>Agregar</button>
-                        {/* <button className="botonCat">Eliminar</button> */}
+                        <button className="botonCat" onClick={() => this.agregarCategoria(this.props.inputCatValue)}>Agregar</button>
                     </label>
                 </div>
             </div>
@@ -89,15 +60,20 @@ class Categorias extends React.Component {
 function mapStateToProps(state) {
     return {
         categorias: state.categorias,
-        categoriaSeleccionada: state.categoriaSeleccionada        
+        categoriaSeleccionada: state.categoriaSeleccionada,
+        inputCatValue: state.inputCatValue,
+        dias: state.dias 
     };
 };
 
 function mapDispatchToProps(dispatch) {
     return {
         selCat: (cat) => dispatch(selCatAction(cat)),
-        delCat: (cat) => dispatch(delCatAction(cat)),
-        addCat: (cat) => dispatch(addCatAction(cat))
+        delCat: (cat, diasPrevio) => dispatch(delCatAction(cat, diasPrevio)),
+        addCat: (cat) => dispatch(addCatAction(cat)),
+        inputCat: (value) => dispatch(inputCatAction(value)),
+        cargarFirebase: () => dispatch(cargarFirebaseAction())
+
     };
 }
 
