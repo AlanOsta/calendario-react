@@ -1,4 +1,5 @@
 import React from 'react'
+import "./Categorias.css"
 import { connect } from 'react-redux';
 import { selCatAction, delCatAction, addCatAction, inputCatAction, cargarFirebaseAction } from '../../actions/actions';
 
@@ -10,36 +11,43 @@ class Categorias extends React.Component {
 
     selCatClickHandler = cat => {this.props.selCat(cat)};
 
-    agregarCategoria = cat => {this.props.addCat(cat)};
+    agregarCategoria = cat => {
+        if (this.props.categorias.includes(cat)){
+            alert("La categoria ya existe")
+        }else {
+            this.props.addCat(cat)
+        }
+    };
 
-    eliminarCategoria = cat => {this.props.delCat(cat, this.props.dias)};
+    eliminarCategoria = cat => {
+        if (window.confirm("¿Esta seguro que desea borrar esta categoria y todos los dias contenidos en ella?")){
+            this.props.delCat(cat, this.props.dias);
+        }
+    }
     
     render() {
         // Creo los botones para las categorias
         let botonesCategorias = this.props.categorias.map((cat) => {
             return (
                 <div key={cat+"div"} className="boton-cat-container">
-                    <button 
+                    <div 
                         key={cat} 
                         className={this.props.categoriaSeleccionada === cat ? 'botonCat seleccionado' : 'botonCat'} 
                         onClick={() => this.selCatClickHandler(cat)}>
                         {cat}
-                    </button>
-                    <button 
+                    </div>
+                    <div
                     key={cat+"x"} 
+                    className={this.props.categoriaSeleccionada === cat ? 'botonX seleccionado' : 'botonX'} 
                     onClick={ () => this.eliminarCategoria(cat)}>
-                        🗑️
-                    </button>
+                        X
+                    </div>
                 </div>
             )
         });
 
         return (
-            <div>
-                <div className= 'seleccion-categorias'>
-                    <h4 className="titulo">Seleccione una categoria:</h4>
-                    {botonesCategorias}                    
-                </div>
+            <div className="categorias-container">
                 <div>
                     <h4 className="titulo">Agregar una categoria:</h4>
                     <label htmlFor="addCatValue">
@@ -48,8 +56,11 @@ class Categorias extends React.Component {
                         value={this.props.inputCatValue}
                         onChange={(e) => this.actualizaInputValue(e)} 
                         placeholder="Ingrese una categoria"/>
-                        <button className="botonCat" onClick={() => this.agregarCategoria(this.props.inputCatValue)}>Agregar</button>
+                        <button onClick={() => this.agregarCategoria(this.props.inputCatValue)}>Agregar</button>
                     </label>
+                </div>
+                <div className= 'seleccion-categorias'>
+                    {botonesCategorias}                    
                 </div>
             </div>
             

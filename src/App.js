@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import Categorias from './components/categorias/Categorias';
 import Calendario from './components/calendario/Calendario';
 
