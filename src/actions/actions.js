@@ -10,7 +10,7 @@ export const delCatAction = (categoria, diasPrevio) => {
         }
     }
     return (dispatch) => {
-        db.collection("calendario").doc("anio2").set({diasFB});
+        db.collection("calendario").doc("anio").set({diasFB});
         dispatch({type: 'DEL_CAT', categoria: categoria});
     }
 }
@@ -22,7 +22,7 @@ export const inputCatAction = inputValue => ({type: 'INPUT_CAT', inputValue: inp
 export const addDiaAction = (dia, categoria, diasPrevio) => {
     const diasFB = {...diasPrevio, [dia]: categoria }
     return (dispatch) => {
-        db.collection("calendario").doc("anio2").set({diasFB})
+        db.collection("calendario").doc("anio").set({diasFB})
         dispatch({type: 'ADD_DIA', dia: dia, categoria: categoria})
     };
 };
@@ -30,14 +30,14 @@ export const addDiaAction = (dia, categoria, diasPrevio) => {
 export const delDiaAction = (dia, diasPrevio) => {
     const { [dia]: value, ...diasFB } = diasPrevio;
     return (dispatch) => {
-        db.collection("calendario").doc("anio2").set({diasFB});
+        db.collection("calendario").doc("anio").set({diasFB});
         dispatch({type: 'DEL_DIA', dia: dia})
     }
 };
 
 export const cargarFirebaseAction = () => {
     return (dispatch) => {
-        let docRef = db.collection("calendario").doc("anio2");
+        let docRef = db.collection("calendario").doc("anio");
         docRef.get()
             .then(function(doc) {
                 let dias = doc.data().diasFB
